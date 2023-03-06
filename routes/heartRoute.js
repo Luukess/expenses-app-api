@@ -1,5 +1,5 @@
 const express = require('express');
-const heart = require('../conrolers/heartbeatControler');
+const heart = require('../controlers/heartbeatControler');
 
 const Router = express.Router();
 
