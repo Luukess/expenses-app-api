@@ -1,4 +1,6 @@
-const {handleRegisterValidation} = require('../utils/registerValidation');
+const { handleRegisterValidation } = require('../utils/registerValidation');
+const bcrypt = require('bcrypt');
+const User = require('../models/userModel');
 
 // @desc Register new user
 // @route GET /api/users/register
@@ -9,14 +11,18 @@ const handleRegisterUser = async (req, res) => {
     try {
         const validation = await handleRegisterValidation(userName, email, password, confirmRegulation);
 
-        if(!validation.error){
-            res.status(201).send('ok');
+        if (!validation.error) {
+            const hashedPassword = await bcrypt.hash(password, 10);
+            const handleAddUser = await User.create({ userName: userName, email: email, password: hashedPassword, confirmRegulation: confirmRegulation });
+            res.status(201).send({ message: 'Registration completed successfully' });
         };
 
     } catch (e) {
         const { error, message } = e;
-        if(error){
-            res.status(400).send({message});
+        if (error || e.errors) {
+            res.status(400).send({ message });
+        } else {
+            res.status(500).send({ mesage: 'Problem connecting to the server' });
         };
     };
 };
