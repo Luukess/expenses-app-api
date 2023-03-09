@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/userModel');
+const Token = require('../models/tokenModel');
 const { handleRegisterValidation } = require('../utils/registerValidation');
 const { handleLoginValidation } = require('../utils/loginValidation');
 const { handleGenerateAccessToken, handleGenerateRefreshToken } = require('../utils/generateToken');
@@ -47,6 +48,7 @@ const handleLoginUser = async (req, res) => {
             const {password, ...restUserObj} = getUser._doc;
             const accessToken = handleGenerateAccessToken(restUserObj);
             const refreshToken = handleGenerateRefreshToken(restUserObj);
+            const saveRefreshToken = await Token.create({token: refreshToken}).catch(() => res.status(500).json({message: 'Problem with connection'}))
             res.json({accessToken, refreshToken});
         }
     } catch (e) {
