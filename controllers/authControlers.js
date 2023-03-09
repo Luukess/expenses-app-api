@@ -45,23 +45,49 @@ const handleLoginUser = async (req, res) => {
         const getUser = await User.findOne({ email: email }).catch(() => res.status(500).json({ message: 'Problem with connection' }));
         const validation = await handleLoginValidation(email, password, getUser);
         if (!validation.error) {
-            const {password, ...restUserObj} = getUser._doc;
+            const { password, ...restUserObj } = getUser._doc;
             const accessToken = handleGenerateAccessToken(restUserObj);
             const refreshToken = handleGenerateRefreshToken(restUserObj);
-            const saveRefreshToken = await Token.create({token: refreshToken}).catch(() => res.status(500).json({message: 'Problem with connection'}))
-            res.json({accessToken, refreshToken});
+            const saveRefreshToken = await Token.create({ token: refreshToken }).catch(() => res.status(500).json({ message: 'Problem with connection' }))
+            res.json({ accessToken, refreshToken });
         }
     } catch (e) {
-        const { error, message } = e;
-        if(error || e.errors){
-            res.status(400).json({message});
-        }else{
-            res.status(500).json({message: 'Problem connecting to the server'});
+        const { error } = e;
+        if (error || e.errors) {
+            res.status(404).send();
+        } else {
+            res.status(500).json({ message: 'Problem connecting to the server' });
+        };
+    };
+};
+
+// @desc log out from app
+// @route DELETE /api/users/logout
+// @access Private
+
+const handleLogOutUser = async (req, res) => {
+    const { token } = req.body;
+    try {
+        const getRefToken = await Token.findOne({ token: token });
+        if (!token) res.status(400).json({ message: 'Incorrect body' });
+        if (!getRefToken) {
+            res.status(400).json({ message: 'Log out failed' });
+        } else {
+            await Token.deleteOne({ _id: getRefToken._id });
+            res.status(200).json({ message: 'Successful logout' });
+        };
+    } catch (e) {
+        const { error } = e;
+        if (error || e.errors) {
+            res.status(400).json({ message: 'Log out failed' });
+        } else {
+            res.status(500).json({ message: 'Problem connecting to the server' });
         };
     };
 };
 
 module.exports = {
     handleRegisterUser,
-    handleLoginUser
-}
+    handleLoginUser,
+    handleLogOutUser
+};
