@@ -9,7 +9,7 @@ connectDB();
 app.use(bodyParser.json());
 
 app.use('/api', require('./routes/heartRoute'));
-app.use('/api/users', require('./routes/authRoutes'));
+app.use('/api/auth', require('./routes/authRoutes'));
 
 app.listen(process.env.PORT, () => {
     console.log('Server started');

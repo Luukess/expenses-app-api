@@ -6,7 +6,7 @@ const { handleLoginValidation } = require('../utils/loginValidation');
 const { handleGenerateAccessToken, handleGenerateRefreshToken } = require('../utils/generateToken');
 
 // @desc Register new user
-// @route POST /api/users/register
+// @route POST /api/auth/register
 // @access Public
 
 const handleRegisterUser = async (req, res) => {
@@ -36,7 +36,7 @@ const handleRegisterUser = async (req, res) => {
 };
 
 // @desc log in to app
-// @route POST /api/users/login
+// @route POST /api/auth/login
 // @access Public
 
 const handleLoginUser = async (req, res) => {
@@ -62,7 +62,7 @@ const handleLoginUser = async (req, res) => {
 };
 
 // @desc log out from app
-// @route DELETE /api/users/logout
+// @route DELETE /api/auth/logout
 // @access Private
 
 const handleLogOutUser = async (req, res) => {
