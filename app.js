@@ -13,6 +13,7 @@ app.use(bodyParser.json());
 
 app.use('/api', require('./routes/heartRoute'));
 app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api', require('./routes/walletRoutes'));
 
 app.listen(process.env.PORT, () => {
     console.log('Server started');
