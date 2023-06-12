@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/userModel');
 const Token = require('../models/tokenModel');
+const jwt = require('jsonwebtoken');
 const { handleRegisterValidation } = require('../utils/registerValidation');
 const { handleLoginValidation } = require('../utils/loginValidation');
 const { handleGenerateAccessToken, handleGenerateRefreshToken } = require('../utils/generateToken');
@@ -86,8 +87,27 @@ const handleLogOutUser = async (req, res) => {
     };
 };
 
+// @desc refresh token
+// @route POST /api/auth/token
+// @access Private
+
+const handleRefreshToken = async (req, res) => {
+    const { token } = req.body;
+
+    if (!token) res.status(401).send();
+    const checkToken = await Token.findOne({ token: token });
+    if (!checkToken) res.status(403).send();
+
+    jwt.verify(checkToken.token, process.env.SECRET_KEY_R_TOKEN, (error, user) => {
+        if (error) res.status(403).json({ message: 'authorization denied' });
+        const accessToken = handleGenerateAccessToken(user);
+        res.status(200).json({ accessToken: accessToken });
+    });
+};
+
 module.exports = {
     handleRegisterUser,
     handleLoginUser,
-    handleLogOutUser
+    handleLogOutUser,
+    handleRefreshToken
 };
