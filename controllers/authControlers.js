@@ -96,7 +96,7 @@ const handleRefreshToken = async (req, res) => {
 
     if (!token) res.status(401).send();
     const checkToken = await Token.findOne({ token: token });
-    if (!checkToken) res.status(403).send();
+    if (!checkToken) res.status(403).json({ message: 'authorization denied' });
 
     jwt.verify(checkToken.token, process.env.SECRET_KEY_R_TOKEN, (error, user) => {
         if (error) res.status(403).json({ message: 'authorization denied' });
